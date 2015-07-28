@@ -1,0 +1,7 @@
+!\skiplist.*
+*
+!.gitignore
+!skiplist.*
+!main.cpp
+!randomizer.hpp
+!CMakeLists.txt
