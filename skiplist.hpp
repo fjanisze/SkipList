@@ -31,6 +31,7 @@ class skiplist {
     float m_pFactor;
     NODE *createNode();
     void insert_impl ( NODE *cur, NODE *newNode , short lvl );
+    NODE *search_impl ( NODE *p_cur, KEY &p_key , short p_lvl );
 public:
     skiplist ( short p_maxLevel = g_defaultMaxHeight , float p_pFactor = .6 );
     ~skiplist();
@@ -47,12 +48,12 @@ skiplist<KEY, VALUE>::skiplist ( short p_maxLevel , float p_pFactor ) :
 template<typename KEY, typename VALUE>
 skiplist<KEY, VALUE>::~skiplist()
 {
-    NODE* cur = m_head;
-    do{
-       NODE* toDelete = cur;
-       cur = cur->links[0];
-       delete toDelete;
-    }while(cur != nullptr);
+    NODE *cur = m_head;
+    do {
+        NODE *toDelete = cur;
+        cur = cur->links[0];
+        delete toDelete;
+    } while ( cur != nullptr );
 }
 
 template<typename KEY, typename VALUE>
@@ -94,8 +95,30 @@ void skiplist<KEY, VALUE>::insert ( KEY p_key, VALUE p_value )
 }
 
 template<typename KEY, typename VALUE>
+typename skiplist<KEY, VALUE>::NODE *skiplist<KEY, VALUE>::search_impl ( skiplist<KEY, VALUE>::NODE *p_cur,
+        KEY &p_key ,
+        short p_lvl )
+{
+    if ( p_cur == nullptr ) {
+        return nullptr;
+    }
+    if ( p_cur->key == p_key ) {
+        return p_cur;
+    }
+    if ( p_cur->links[p_lvl] == nullptr || p_cur->links[p_lvl]->key > p_key ) {
+        if ( p_lvl == 0 ) {
+            return nullptr;
+        }
+        return search_impl ( p_cur, p_key, p_lvl - 1 );
+    }
+    return search_impl ( p_cur->links[p_lvl], p_key, p_lvl );
+}
+
+template<typename KEY, typename VALUE>
 VALUE skiplist<KEY, VALUE>::search ( KEY &p_key )
 {
+    auto node = search_impl ( m_head, p_key, m_maxLevel - 1 );
+    return ( node == nullptr ) ? -1 : node->value;
 }
 }
 
