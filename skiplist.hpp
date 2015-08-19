@@ -17,7 +17,7 @@ struct node {
     }
 };
 
-constexpr short g_defaultMaxHeight {16};
+constexpr short g_defaultMaxHeight {32};
 
 template < typename KEY,
          typename VALUE >
@@ -33,7 +33,7 @@ class skiplist {
     void insert_impl ( NODE *cur, NODE *newNode , short lvl );
     NODE *search_impl ( NODE *p_cur, KEY &p_key , short p_lvl );
 public:
-    skiplist ( short p_maxLevel = g_defaultMaxHeight , float p_pFactor = .6 );
+    skiplist ( short p_maxLevel = g_defaultMaxHeight , float p_pFactor = .5 );
     ~skiplist();
     void  insert ( KEY p_key, VALUE p_value );
     VALUE search ( KEY &p_key );
@@ -60,7 +60,7 @@ template<typename KEY, typename VALUE>
 typename skiplist<KEY, VALUE>::NODE *skiplist<KEY, VALUE>::createNode()
 {
     short lvl {1};
-    while ( ( std::generate_canonical<double, 16> ( m_re ) <= m_pFactor ) && ( lvl < m_maxLevel ) ) {
+    while ( ( std::generate_canonical<double, 8> ( m_re ) <= m_pFactor ) && ( lvl < m_maxLevel ) ) {
         ++lvl;
     }
     return new NODE ( lvl );
